@@ -87,7 +87,7 @@ The user has dates, destination, and wants to see prices.
 3. Present results using the display format below
 4. If user wants to narrow down → use filters (maxPrice, hotelName) or follow up with `getHotelDetails`
 5. If user wants to compare → present a comparison table
-6. Provide booking links from the response — every result includes `bookingUrl` and `galleryUrl`
+6. Provide booking links from the response — results typically include `bookingUrl` and `galleryUrl` when dates are provided
 
 ### Workflow 3: Vibe/Semantic Search
 
@@ -282,6 +282,25 @@ All ratings across all tools and displays are on a **0–10 scale**. This includ
 | 429 Rate limited | Too many requests per minute | Wait and retry after a brief pause |
 | Empty results (not an error) | No availability, or city/region not covered by LiteAPI | Use `relaxConstraints`, try placeId, or try a nearby city |
 | Timeout | Slow upstream provider | Retry once; for `searchHotelsWithRates`, try setting `timeout` parameter |
+| 401 Unauthorized | Missing or expired auth token | Re-authenticate; for public tools, verify tool name is in PUBLIC_TOOLS |
+
+### Retry Logic
+
+If a tool call fails or returns unexpected results:
+1. Retry the same call once — transient errors (timeouts, 5xx, stale cache) often resolve on retry
+2. If the retry fails, do NOT keep retrying the same call — switch to an alternative approach
+3. For auth errors (401), do not retry — inform the user and suggest re-connecting the MCP server
+
+### Fallback UX
+
+When a tool fails, communicate clearly and offer alternatives:
+1. **Explain briefly** what happened — "I wasn't able to get live pricing for that search"
+2. **Suggest an alternative path:**
+   - Search failed → try a broader search, nearby city, or use placeId instead of cityName
+   - `getHotelDetails` failed → offer to search by hotel name via `searchHotelsWithRates`
+   - `askHotelQuestion` failed → suggest checking the hotel's website directly
+   - Pricing unavailable → use `findHotels` for metadata without pricing, or `getHotelPriceIndex` for historical trends
+3. **Never leave the user stuck** — always offer at least one actionable next step
 
 ## Conversation Patterns
 
