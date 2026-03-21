@@ -140,8 +140,9 @@ The agent does not book directly. The flow is:
 
 MCP tool responses include both structured data and human-readable text:
 
-- **Use structured JSON fields** (`result.data`) for logic: extracting hotel IDs, prices, ratings, URLs, and building comparisons
-- **Use `content[].text`** (markdown) for human-facing presentation when directly displaying results
+- **Prefer structured JSON fields** in `result.structuredContent` for logic: extracting hotel IDs, prices, ratings, URLs, review counts, and building comparisons
+- Many tools also nest payloads under `result.structuredContent.data` — inspect the exact shape before extracting fields
+- **Use `result.content[].text`** (markdown) for human-facing presentation when directly displaying results
 - When building follow-up calls (e.g., passing a hotel ID to `getHotelDetails`), always extract from structured data, not by parsing the markdown text
 
 ## Display Format
@@ -282,7 +283,7 @@ All ratings across all tools and displays are on a **0–10 scale**. This includ
 | 429 Rate limited | Too many requests per minute | Wait and retry after a brief pause |
 | Empty results (not an error) | No availability, or city/region not covered by LiteAPI | Use `relaxConstraints`, try placeId, or try a nearby city |
 | Timeout | Slow upstream provider | Retry once; for `searchHotelsWithRates`, try setting `timeout` parameter |
-| 401 Unauthorized | Missing or expired auth token | Re-authenticate; for public tools, verify tool name is in PUBLIC_TOOLS |
+| 401 Unauthorized | Missing/expired auth, or a stale MCP session | Open a fresh MCP session and retry once; if it persists, re-authenticate / reconnect the MCP server |
 
 ### Retry Logic
 
