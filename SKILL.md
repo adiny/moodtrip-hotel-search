@@ -1,6 +1,18 @@
 ---
 name: moodtrip-hotel-search
-description: Search, compare, evaluate, and hand off hotel bookings using the MoodTrip.ai MCP server (api.moodtrip.ai). **Requires MoodTrip to be connected as an MCP integration** (Settings → Integrations → Add Custom Integration → URL: https://api.moodtrip.ai/api/mcp-http). Use this skill whenever the user mentions hotels, accommodation, lodging, stays, travel bookings, hotel search, hotel comparison, hotel reviews, hotel pricing, or anything related to finding or booking a place to stay. Also trigger when the user asks about hotel amenities, room types, check-in/check-out logistics, travel destinations with accommodation needs, or says things like "find me a hotel", "where should I stay", "book a room", "hotel recommendations", or "compare hotels". This skill connects to the MoodTrip MCP server which provides real-time hotel inventory, pricing, semantic search, reviews, and booking link handoff via LiteAPI.
+description: >
+  Search, compare, evaluate, and hand off hotel bookings using the MoodTrip.ai
+  MCP server (api.moodtrip.ai). Requires MoodTrip to be connected as an MCP
+  integration (Settings > Integrations > Add Custom Integration > URL
+  https://api.moodtrip.ai/api/mcp-http). Use this skill whenever the user
+  mentions hotels, accommodation, lodging, stays, travel bookings, hotel search,
+  hotel comparison, hotel reviews, hotel pricing, or anything related to finding
+  or booking a place to stay. Also trigger when the user asks about hotel
+  amenities, room types, check-in/check-out logistics, travel destinations with
+  accommodation needs, or says things like find me a hotel, where should I stay,
+  book a room, hotel recommendations, or compare hotels. This skill connects to
+  the MoodTrip MCP server which provides real-time hotel inventory, pricing,
+  semantic search, reviews, and booking link handoff via LiteAPI.
 ---
 
 # MoodTrip Hotel Search Skill
