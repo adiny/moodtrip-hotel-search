@@ -1,9 +1,25 @@
 ---
 name: moodtrip-hotel-search
-description: Search, compare, evaluate, and hand off hotel bookings using the MoodTrip.ai MCP server (api.moodtrip.ai). Use this skill whenever the user mentions hotels, accommodation, lodging, stays, travel bookings, hotel search, hotel comparison, hotel reviews, hotel pricing, or anything related to finding or booking a place to stay. Also trigger when the user asks about hotel amenities, room types, check-in/check-out logistics, travel destinations with accommodation needs, or says things like "find me a hotel", "where should I stay", "book a room", "hotel recommendations", or "compare hotels". This skill connects to the MoodTrip MCP server which provides real-time hotel inventory, pricing, semantic search, reviews, and booking link handoff via LiteAPI.
+description: Search, compare, evaluate, and hand off hotel bookings using the MoodTrip.ai MCP server (api.moodtrip.ai). **Requires MoodTrip to be connected as an MCP integration** (Settings → Integrations → Add Custom Integration → URL: https://api.moodtrip.ai/api/mcp-http). Use this skill whenever the user mentions hotels, accommodation, lodging, stays, travel bookings, hotel search, hotel comparison, hotel reviews, hotel pricing, or anything related to finding or booking a place to stay. Also trigger when the user asks about hotel amenities, room types, check-in/check-out logistics, travel destinations with accommodation needs, or says things like "find me a hotel", "where should I stay", "book a room", "hotel recommendations", or "compare hotels". This skill connects to the MoodTrip MCP server which provides real-time hotel inventory, pricing, semantic search, reviews, and booking link handoff via LiteAPI.
 ---
 
 # MoodTrip Hotel Search Skill
+
+> ⚠️ **Prerequisites — MCP Connection Required**
+>
+> This skill provides **instructions only** — it tells the agent how to use MoodTrip's tools,
+> but it does **not** create a network connection to the MoodTrip server.
+> You must connect MoodTrip as an MCP integration on your platform for the skill to work.
+>
+> **Quick setup by platform:**
+> | Platform | How to connect |
+> |----------|---------------|
+> | **Claude.ai** | Settings → Integrations → **+ Add Custom Integration** → Name: `MoodTrip`, URL: `https://api.moodtrip.ai/api/mcp-http` |
+> | **Claude Desktop** | Settings → Extensions → Add, or edit `claude_desktop_config.json` (see below) |
+> | **ChatGPT** | Settings → Integrations → MCP → Add URL: `https://api.moodtrip.ai/api/mcp-http` |
+> | **OpenClaw / other agents** | Add MCP server config with URL: `https://api.moodtrip.ai/api/mcp-http` |
+>
+> Without this connection, hotel search tools will not be available and calls will fail.
 
 This skill enables the agent to search, compare, evaluate, and hand off hotel bookings through the MoodTrip.ai MCP server. The server exposes 12 core tools covering the full hotel discovery-to-booking-handoff workflow.
 
@@ -14,6 +30,16 @@ Booking is link-based: the agent helps users find and compare hotels, then provi
 **MCP Server URL:** `https://api.moodtrip.ai/api/mcp-http`
 **Protocol:** MCP Streamable HTTP (JSON-RPC 2.0)
 **Authentication:** None required — all 12 core search tools are public
+
+### Claude.ai (Web & Mobile)
+
+1. Go to **Settings → Integrations**
+2. Click **"+ Add Custom Integration"**
+3. Name: `MoodTrip`
+4. URL: `https://api.moodtrip.ai/api/mcp-http`
+5. Save — no authentication needed
+
+> Available on Free (1 custom connector), Pro, Max, Team, and Enterprise plans.
 
 ### Claude Desktop
 
@@ -29,6 +55,8 @@ Add to `claude_desktop_config.json`:
   }
 }
 ```
+
+Restart Claude Desktop after saving.
 
 ### ChatGPT
 
@@ -313,6 +341,7 @@ All ratings across all tools and displays are on a **0–10 scale**. This includ
 ### Common Errors
 | Error | Cause | Resolution |
 |-------|-------|------------|
+| Tools not found / skill not working | MCP server not connected — skill is installed but the platform has no active MCP connection to MoodTrip | Connect MoodTrip as an integration (see Prerequisites above). The skill provides instructions only; the MCP connection provides the actual tools. |
 | 400 Invalid dates | Checkin in the past, checkout before checkin, or dates too far out (>365 days) | Validate dates before calling |
 | 404 Hotel not found | Invalid or expired hotelId | Search again to get fresh IDs |
 | 429 Rate limited | Too many requests per minute | Wait and retry after a brief pause |
@@ -330,7 +359,10 @@ If a tool call fails or returns unexpected results:
 ### Fallback UX
 
 When a tool fails, communicate clearly and offer alternatives:
-1. **Explain briefly** what happened — "I wasn't able to get live pricing for that search"
+1. **If MCP tools are not available at all** — the skill is installed but MCP is not connected. Tell the user:
+   - "MoodTrip's search tools aren't connected yet. To enable hotel search, go to **Settings → Integrations → + Add Custom Integration** and add URL: `https://api.moodtrip.ai/api/mcp-http`"
+   - Do NOT attempt to call MoodTrip tools via bash/curl — the network is restricted in computer-use environments
+2. **Explain briefly** what happened — "I wasn't able to get live pricing for that search"
 2. **Suggest an alternative path:**
    - Search failed → try a broader search, nearby city, or use placeId instead of cityName
    - `getHotelDetails` failed → offer to search by hotel name via `searchHotelsWithRates`
