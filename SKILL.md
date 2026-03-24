@@ -9,6 +9,41 @@ This skill enables the agent to search, compare, evaluate, and hand off hotel bo
 
 Booking is link-based: the agent helps users find and compare hotels, then provides a direct booking URL. The user completes the reservation on the MoodTrip website.
 
+## Connection
+
+**MCP Server URL:** `https://api.moodtrip.ai/api/mcp-http`
+**Protocol:** MCP Streamable HTTP (JSON-RPC 2.0)
+**Authentication:** None required — all 12 core search tools are public
+
+### Claude Desktop
+
+Add to `claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "moodtrip": {
+      "command": "npx",
+      "args": ["-y", "mcp-remote", "https://api.moodtrip.ai/api/mcp-http"]
+    }
+  }
+}
+```
+
+### ChatGPT
+
+Add as MCP server in ChatGPT settings → Integrations → MCP:
+- URL: `https://api.moodtrip.ai/api/mcp-http`
+
+### Direct HTTP (any MCP client)
+
+```bash
+POST https://api.moodtrip.ai/api/mcp-http
+Content-Type: application/json
+
+{"jsonrpc":"2.0","id":"1","method":"tools/list","params":{}}
+```
+
 ## Decision Rules
 
 Before calling any tool, apply these rules to pick the right one:
