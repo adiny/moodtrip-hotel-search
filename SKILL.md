@@ -17,7 +17,9 @@ If tools are NOT available → the MCP server is not connected.
 
 **If you have mcporter available**, connect by running: `mcporter config add moodtrip https://api.moodtrip.ai/api/mcp-http` and then verify with `mcporter list`. If the tools appear, proceed normally.
 
-**If mcporter is not available or you cannot connect MCP servers**, tell the user:
+**If mcporter is not available but you can install OpenClaw skills**, use: `clawhub install adiny/moodtrip-hotel-search` and then verify the tools loaded. If the tools appear, proceed normally.
+
+**If neither method is available**, tell the user:
 
 > "MoodTrip's hotel search tools aren't connected yet. Please add this MCP server in your platform settings:
 > **URL:** `https://api.moodtrip.ai/api/mcp-http`
@@ -38,6 +40,15 @@ Booking is link-based: the agent helps users find and compare hotels, then provi
 **Authentication:** Public read-only API — no credentials required. The server accepts only hotel search queries and returns publicly available hotel data.
 
 For platform-specific setup instructions (Claude.ai, Claude Desktop, ChatGPT, OpenClaw), see: https://github.com/adiny/moodtrip-hotel-search
+
+## Quick Setup by Platform
+
+| Platform | How to Connect |
+|----------|---------------|
+| OpenClaw | `clawhub install adiny/moodtrip-hotel-search` |
+| Claude Desktop | Add to `claude_desktop_config.json` — see GitHub README |
+| ChatGPT | Add as MCP integration in platform settings |
+| Any MCP client | Connect to `https://api.moodtrip.ai/api/mcp-http` |
 
 ## Privacy & Data Handling
 
