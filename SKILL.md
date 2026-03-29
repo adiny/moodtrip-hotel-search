@@ -10,9 +10,11 @@ description: Search, compare, evaluate, and hand off hotel bookings using the Mo
 Before attempting any hotel search, verify MoodTrip tools are accessible.
 
 **Step 1: Check for tools directly.**
-Look for any of these tools in your available tool list: `searchHotelsWithRates`, `findHotels`, `search_hotels_by_description`, `search_hotels`, `get_hotel_details`
+Look for any of these tools in your available tool list: `search_hotels`, `get_hotel_details`, `searchHotelsWithRates`, `findHotels`, `search_hotels_by_description`, `build_booking_link`
 
 If ANY of these tools are found → skip to Decision Rules and proceed normally.
+
+**Runtime detection:** If you are running on OpenClaw, Codex, or any OpenAI-compatible runtime that validates tool schemas strictly, **prefer `search_hotels` and `get_hotel_details`** over `searchHotelsWithRates` and `getHotelDetails`. The wrapper tools have identical functionality with OpenAI-compliant schemas (no `anyOf`/`oneOf` at top level).
 
 **Step 2: Check if MCP server is already configured.**
 If tools are not in your direct tool list, check whether `api.moodtrip.ai` or `moodtrip` is already configured as an MCP server anywhere in your platform config — including under any of these paths:
@@ -91,9 +93,10 @@ Before calling any tool, apply these rules to pick the right one:
 
 | Condition | Tool |
 |-----------|------|
-| User has dates + destination + wants prices | `searchHotelsWithRates` |
+| **OpenClaw / Codex runtime** — always prefer wrapper tools | Use `search_hotels` instead of `searchHotelsWithRates`, `get_hotel_details` instead of `getHotelDetails` |
+| User has dates + destination + wants prices | `search_hotels` (preferred) or `searchHotelsWithRates` |
 | User describes a vibe, mood, or style | `search_hotels_by_description` |
-| User asks about one specific hotel | `getHotelDetails` or `ask_about_hotel` |
+| User asks about one specific hotel | `get_hotel_details` (preferred) or `getHotelDetails` or `ask_about_hotel` |
 | No pricing needed yet / just browsing | `findHotels` |
 | User wants reviews or guest opinions | `getHotelReviews` |
 | User wants to find a specific room type or match a photo | `search_rooms_by_description` |
@@ -118,14 +121,16 @@ Before calling any tool, apply these rules to pick the right one:
 | `getCityPriceIndex` | City-level price trends | "When is Paris cheapest?" |
 | `relaxConstraints` | Broaden a failed search | When search returns no results |
 
-### Agent Builder Tools (optional)
+### Agent Builder Tools (preferred on OpenClaw / Codex runtimes)
 
-If the platform exposes OpenAI Agent Builder tools in addition to the core MCP tools, the following may also be available:
+If your runtime uses OpenAI/Codex tool validation (e.g. OpenClaw), **use these tools instead of the core equivalents**. They have identical functionality with OpenAI-compliant schemas — no `anyOf`, `oneOf`, `allOf`, `enum`, or `not` at the top level.
+
+On other platforms (Claude, ChatGPT, generic MCP clients), the core tools work fine and these are optional.
 
 | Tool | Purpose | Key Parameters |
 |------|---------|----------------|
+| `search_hotels` | **Use instead of `searchHotelsWithRates`** — extended search with pricing | `query` (natural language), `city`, `country`, `checkIn`, `checkOut`, `adults`, `maxPrice`, `minRating` |
+| `get_hotel_details` | **Use instead of `getHotelDetails`** — hotel details with pricing | `hotelId`, `checkin`, `checkout`, `adults`, `currency` |
 | `build_booking_link` | Generate booking/gallery URLs from a hotelId | `hotelId` (required), `checkin`, `checkout`, `adults`, `children` (array of ages 0–17, max 6), `currency` |
-| `search_hotels` | Extended search wrapper | `query` (natural language), `city`, `country`, `checkIn`, `checkOut`, `adults`, `maxPrice`, `minRating` |
-| `get_hotel_details` | Hotel details wrapper | `hotelId`, `checkin`, `checkout`, `adults`, `currency` |
 
-These are not part of the standard MCP `tools/list` and may not be present in all clients. Always check tool availability first.
+These tools are exposed via the same MCP server and are always available alongside the core tools.
