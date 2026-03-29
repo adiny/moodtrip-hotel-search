@@ -10,7 +10,7 @@ description: Search, compare, evaluate, and hand off hotel bookings using the Mo
 Before attempting any hotel search, verify MoodTrip tools are accessible.
 
 **Step 1: Check for tools directly.**
-Look for any of these tools in your available tool list: `searchHotelsWithRates`, `findHotels`, `search_hotels_by_description`, `search`, `fetch`
+Look for any of these tools in your available tool list: `searchHotelsWithRates`, `findHotels`, `search_hotels_by_description`, `search_hotels`, `get_hotel_details`
 
 If ANY of these tools are found → skip to Decision Rules and proceed normally.
 
@@ -21,6 +21,10 @@ If tools are not in your direct tool list, check whether `api.moodtrip.ai` or `m
 - `skills.entries.moodtrip-hotel-search`
 - `skills/moodtrip-hotel-search/_meta.json` → `mcpServers.moodtrip`
 - `skills/moodtrip-hotel-search/.mcp.json`
+
+This skill ships with `.mcp.json` and `_meta.json` files that declare the MCP server configuration. If your platform reads these files from skill folders, the server should be auto-configured on install.
+
+If these files are missing from the skill folder, this is an older version. Suggest the user update: `clawhub update adiny/moodtrip-hotel-search` or `openclaw skills update`
 
 If the server IS configured but tools are not showing, this is likely a **tool loading/exposure issue in the current session**, not a missing connection. Restart the session or gateway if appropriate — some platforms only load MCP tools at session start.
 
