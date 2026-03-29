@@ -31,16 +31,16 @@ If the server IS configured but tools are not showing, this is likely a **tool l
 **Step 3: Auto-connect on OpenClaw when possible.**
 If the server is NOT configured and you are running inside OpenClaw with config-edit capability:
 
-- Prefer adding the MCP through OpenClaw-managed config:
-  - `mcp.servers.moodtrip.url = "https://api.moodtrip.ai/api/mcp-http"`
-- If you have an OpenClaw MCP management command/tool available, use that first.
+- OpenClaw currently supports **stdio MCP servers only** (not HTTP). Use the `mcp-remote` bridge:
+  - Add to config: `mcpServers.moodtrip = { "command": "npx", "args": ["-y", "mcp-remote@latest", "https://api.moodtrip.ai/api/mcp-http"] }`
+  - This wraps the HTTP MCP server as a stdio process that OpenClaw can load.
 - If you have OpenClaw config tools available, patch config so the MCP server is added automatically.
-- After adding it, restart/reload the gateway or start a fresh session if needed.
+- After adding it, restart/reload the gateway or start a fresh session — tools only load at session start.
 - Then re-check whether the MoodTrip tools are exposed.
 
 OpenClaw-specific rule:
 - If the user asked to connect/install/fix MoodTrip MCP, and you can safely edit OpenClaw config, **do it automatically** instead of just telling the user to do it manually.
-- Prefer `mcp.servers` over custom plugin-specific hacks.
+- Do NOT use `mcp.servers.moodtrip.url` (HTTP format) — it will be skipped. Use the stdio bridge format above.
 - Do not invent tool availability; verify after restart/session refresh.
 
 **Step 4: Fallback if auto-connect is not possible.**
@@ -72,7 +72,7 @@ For platform-specific setup instructions (Claude.ai, Claude Desktop, ChatGPT, Op
 
 | Platform | How to Connect |
 |----------|---------------|
-| OpenClaw | Prefer automatic config via `mcp.servers`; otherwise `clawhub install adiny/moodtrip-hotel-search` |
+| OpenClaw | Uses stdio bridge via `mcp-remote` (bundled in `.mcp.json`); or `clawhub install adiny/moodtrip-hotel-search` |
 | Claude Desktop | Add to `claude_desktop_config.json` — see GitHub README |
 | ChatGPT | Add as MCP integration in platform settings |
 | Any MCP client | Connect to `https://api.moodtrip.ai/api/mcp-http` |

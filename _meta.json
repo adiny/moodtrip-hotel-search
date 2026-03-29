@@ -4,8 +4,8 @@
   "emoji": "🏨",
   "mcpServers": {
     "moodtrip": {
-      "url": "https://api.moodtrip.ai/api/mcp-http",
-      "transport": "streamable-http"
+      "command": "npx",
+      "args": ["-y", "mcp-remote@latest", "https://api.moodtrip.ai/api/mcp-http"]
     }
   }
 }
